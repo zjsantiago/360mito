@@ -5,51 +5,113 @@ define([ 'tab', 'likescrollbar', 'lazyload'], function(){
     var mitoTab = $( '#mitoTab' ),
         channels = ["meinv", "bagua", "bizhi"],
         lazyload = $.ui.Lazyload,
-        tab, likeScrollbar, hoverTimer1, hoverTimer2, scrollbarElem, imgs, loader, index
+        initNum = 2,
+        tab, likeScrollbar, hoverTimer1, hoverTimer2, scrollbarElem, imgs, loader,
 
         tabInit = function( tabBox, index){
             tabBox = tabBox || $( 'div.tab_box', this ).eq( 0 ); 
             index = index?index:0;
-
             //获取当前日期
             var date = new Date();
             date = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
             $("div.tab_box .date").eq(index).text(date);
 
             //显示图片
-            getImg(tabBox, index);
+            getImg( tabBox, index );
         };
 
-        //获取图片数据
-        var getImg = function (tabBox, index) {
-            $.ajax({
-                url: "http://fk.ext.image.so.com/index.php?c=Extension&a=jsonp&type="+channels[index],
-                type: "GET",
-                dataType: "json",
-                success: showImg
-            });
-        };
+    //获取图片数据
+    var getImg = function (tabBox, index) {
+        $.ajax({
+            url: "http://image.so.com/index.php?c=Extension&a=jsonp&type="+channels[index],
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                var item,
+                list = [],
+                content,
+                currentList = $(".img_list").eq(index);
 
-        //显示图片
-        var showImg = function(data) {
+                //拼接字符串
+                $(data.list).each(function(){
+                    item = '<li>\
+                            <p><a target="_blank" href="'+this.click_url+'" class="img_tit">'+this.group_title+'</a></p>\
+                            <a target="_blank" href="'+this.click_url+'" class="img_box" width="'+this.qhimg_width+'px" height="'+this.qhimg_height+'px">\
+                                <img width="'+this.qhimg_width+'px" height="'+this.qhimg_height+'px" src="img/placeholder.png" data-lazysrc="'+this.qhimg_thumb_url+'">\
+                                <span class="img_count">'+this.total_count+'张</span>\
+                            </a>\
+                            <ul class="img_bar">\
+                                <li><a class="setup" href="zhushou360://quiet=1&src=leidian&dtype=wallpaper&op=0&type=jpg&name='+this.group_title+'&url='+this.downurl+'"><s class="icon_mobile"></s>发送到手机</a></li>\
+                                <li class="img_share">\
+                                    <a href="javascript:;"><s class="icon_share"></s>分享</a>\
+                                    <ul class="share_list" data-title="'+this.group_title+'" data-imgsrc="'+this.qhimg_url+'">\
+                                        <li><a title="分享到 新浪微博" class="share_link weibo" href="#" target="_blank">新浪微博</a></li>\
+                                        <li><a title="分享到 腾讯微博" class="share_link tweibo" href="#" target="_blank">腾讯微博</a></li>\
+                                        <li><a title="分享到 QQ空间" class="share_link qzone" href="#" target="_blank">QQ空间</a></li>\
+                                        <li><a title="分享到 人人网" class="share_link renren" href="#" target="_blank">人人网</a></li>\
+                                        <li><a title="分享到 豆瓣网" class="share_link douban" href="#" target="_blank">豆瓣网</a></li>\
+                                    </ul>\
+                                </li>\
+                            </ul>\
+                            </li>';
+                    list.push(item);
+                });
+                content = list.join('\n');
 
-        };
+                var icon = '<s class="icon_new"></s>'
+                currentList.empty();
+                currentList.append(content);
+                currentList.find(".img_tit:first").prepend(icon);
 
-        //填充DOM
-        var fillDom = function() {
+                //延迟:加载，并重置滚动条
+                lazyLoad(index);
+                setScroll(tabBox);
 
-        };
+                //3次tab的init事件都触发完之后再绑定change事件
+                if(!initNum--) {
+                    tab.on( 'change', function( e ){
+                        setScroll(e.target);
+                    });
+                }
+            }
+        });
+    };
 
-        //延迟加载
-        var lazyLod = function() {
+    //延迟加载
+    var lazyLoad = function(index) {
+        imgs = $( '.tab_box:eq('+index+') .img_box img' ),
+        loader = new lazyload( imgs, {
+            container : '.tab_box:eq('+index+')',
+            threshold : 200,
+        });
+    };
 
-        };
+    //初始化滚动条
+    var setScroll = function(tabBox) {
+        tabBox = tabBox || $( 'div.tab_box', this ).eq( 0 );
+        if( likeScrollbar ){
+            likeScrollbar.destroy();
+            likeScrollbar = null;
+        }
 
-        //重置滚动条
-        var setScroll = function() {
+        likeScrollbar = new $.ui.LikeScrollbar( tabBox, {
+            left : 4
+        });
+    };
 
-        };
-
+    // Tab 组件实例化    
+    tab = new $.ui.Tab( mitoTab, {
+        init : tabInit
+    });
+    
+    // Tab初始化的时候，加载数据
+    tab.on('init', function(e){
+        tabInit( e.target, e.index); 
+    });
+    // 切换 Tab 面板的时候需要重新初始化滚动条
+    // tab.on( 'change', function( e ){
+    //     setScroll(e.target);
+    // });
 
         
     // //获取图片刷新tab
@@ -106,20 +168,7 @@ define([ 'tab', 'likescrollbar', 'lazyload'], function(){
     //     });
     // }
         
-    // Tab 组件实例化    
-    tab = new $.ui.Tab( mitoTab, {
-        init : tabInit
-    });
-    
-    // Tab初始化的时候，加载数据
-    tab.on('init', function(e){
-        index = e.index;
-        tabInit( e.target, e.index); 
-    });
-    // 切换 Tab 面板的时候需要重新初始化滚动条
-    tab.on( 'change', function( e ){
-        //tabInit( e.target);
-    });
+
     
     // hover时显示滚动条
     mitoTab.find( 'div.tab_wrapper' ).on( 'mouseenter', function(){
