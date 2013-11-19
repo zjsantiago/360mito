@@ -1,8 +1,11 @@
 /*
-* LikeScrollbar components for jquery ( AMD Module )
-* 模拟滚动条组件
-* Mail : chenyiguo@360.cn
-* Date : 2013-10-24
+* LikeScrollbar component for jQuery ( AMD Module )
+*
+* Copyright (c) 2013 Yiguo Chan
+* Released under the MIT Licenses
+*
+* Mail : chenmnkken@gmail.com
+* Date : 2013-11-19
 */
 
 define(['drag'], function(){
@@ -112,7 +115,7 @@ var easyScrollbar = {
                 SCROLL = isY ? 'scrollTop' : 'scrollLeft',
                 posName = isY ? 'top' : 'left',
                 pos = parseInt( thumbElem.css(posName) ),
-                distance = 18;
+                distance = 15;
         
             if( e.wheelDelta < 0 ){
                 pos += distance;
@@ -211,7 +214,7 @@ LikeScrollbar.prototype = {
         o.scrollbarElem.remove();        
         
         o.target.css( 'overflow', '' )
-            .off( 'likestart likescroll likescrollend' )
+            .off( 'likescrollstart likescroll likescrollend' )
             .wheel( 'off' );
         
         this.__o__ = o = null;
@@ -228,6 +231,7 @@ LikeScrollbar.prototype = {
         
         o.target.on( 'like' + type, function( e ){
             e.type = type;
+            e.target = o.scrollbarElem[0];
             fn.call( self, e );
             e.stopPropagation();
         });
@@ -237,7 +241,7 @@ LikeScrollbar.prototype = {
     
     un : function( type ){
         if( this.__o__ ){
-            this.__o__.target.un( 'like' + type );
+            this.__o__.target.off( 'like' + type );
         }
         
         return this;
