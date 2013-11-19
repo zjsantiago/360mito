@@ -5,11 +5,11 @@ define([ 'tab', 'likescrollbar', 'lazyload'], function(){
     var mitoTab = $( '#mitoTab' ),
         channels = ["meinv", "bagua", "bizhi"],
         lazyload = $.ui.Lazyload,
-        tab, likeScrollbar, hoverTimer1, hoverTimer2, scrollbarElem, imgs, loader,
+        tab, likeScrollbar, hoverTimer1, hoverTimer2, scrollbarElem, imgs, loader, index
 
         tabInit = function( tabBox, index){
             tabBox = tabBox || $( 'div.tab_box', this ).eq( 0 ); 
-            var index = index?index:0;
+            index = index?index:0;
 
             //获取当前日期
             var date = new Date();
@@ -17,72 +17,108 @@ define([ 'tab', 'likescrollbar', 'lazyload'], function(){
             $("div.tab_box .date").eq(index).text(date);
 
             //显示图片
-            showImg(index, tabBox);
+            getImg(tabBox, index);
         };
+
+        //获取图片数据
+        var getImg = function (tabBox, index) {
+            $.ajax({
+                url: "http://fk.ext.image.so.com/index.php?c=Extension&a=jsonp&type="+channels[index],
+                type: "GET",
+                dataType: "json",
+                success: showImg
+            });
+        };
+
+        //显示图片
+        var showImg = function(data) {
+
+        };
+
+        //填充DOM
+        var fillDom = function() {
+
+        };
+
+        //延迟加载
+        var lazyLod = function() {
+
+        };
+
+        //重置滚动条
+        var setScroll = function() {
+
+        };
+
+
         
-    //获取图片刷新tab
-    var showImg = function (index, tabBox) {
-        $.ajax({
-            url: "http://fk.ext.image.so.com/index.php?c=Extension&a=jsonp&type="+channels[index],
-            type: "GET",
-            dataType: "json",
-            success: function(data){
-                var currentList = $(".img_list").eq(index);
-                var count = data.count;
+    // //获取图片刷新tab
+    // var showImg = function (tabBox, index) {
+    //     $.ajax({
+    //         url: "http://fk.ext.image.so.com/index.php?c=Extension&a=jsonp&type="+channels[index],
+    //         type: "GET",
+    //         dataType: "json",
+    //         success: function(data){
 
-                currentList.empty();
-                $(data.list).each(function(){
-                    var item = '<li>\
-                                <p><a target="_blank" href="'+this.click_url+'" class="img_tit"><s class="icon_new"></s>'+this.group_title+'</a></p>\
-                                <a target="_blank" href="'+this.click_url+'" class="img_box" width="'+this.qhimg_width+'px" height="'+this.qhimg_height+'px">\
-                                    <img width="'+this.qhimg_width+'px" height="'+this.qhimg_height+'px" src="img/placeholder.png" data-lazysrc="'+this.qhimg_thumb_url+'">\
-                                    <span class="img_count">'+count+'张</span>\
-                                </a>\
-                                <ul class="img_bar">\
-                                    <li><a class="setup" href="zhushou360://quiet=1&src=leidian&dtype=wallpaper&op=0&type=jpg&name='+this.group_title+'&url='+this.downurl+'"><s class="icon_mobile"></s>发送到手机</a></li>\
-                                    <li class="img_share">\
-                                        <a href="javascript:;"><s class="icon_share"></s>分享</a>\
-                                        <ul class="share_list" data-title="'+this.group_title+'" data-imgsrc="'+this.qhimg_url+'">\
-                                            <li><a title="分享到 新浪微博" class="share_link weibo" href="#" target="_blank">新浪微博</a></li>\
-                                            <li><a title="分享到 腾讯微博" class="share_link tweibo" href="#" target="_blank">腾讯微博</a></li>\
-                                            <li><a title="分享到 QQ空间" class="share_link qzone" href="#" target="_blank">QQ空间</a></li>\
-                                            <li><a title="分享到 人人网" class="share_link renren" href="#" target="_blank">人人网</a></li>\
-                                            <li><a title="分享到 豆瓣网" class="share_link douban" href="#" target="_blank">豆瓣网</a></li>\
-                                        </ul>\
-                                    </li>\
-                                </ul>\
-                                </li>';
-                    currentList.append(item); 
-                });
+    //             var currentList = $(".img_list").eq(index);
+    //             currentList.empty();
+    //             $(data.list).each(function(){
+    //                 var item = '<li>\
+    //                             <p><a target="_blank" href="'+this.click_url+'" class="img_tit">'+this.group_title+'</a></p>\
+    //                             <a target="_blank" href="'+this.click_url+'" class="img_box" width="'+this.qhimg_width+'px" height="'+this.qhimg_height+'px">\
+    //                                 <img width="'+this.qhimg_width+'px" height="'+this.qhimg_height+'px" src="img/placeholder.png" data-lazysrc="'+this.qhimg_thumb_url+'">\
+    //                                 <span class="img_count">'+this.total_count+'张</span>\
+    //                             </a>\
+    //                             <ul class="img_bar">\
+    //                                 <li><a class="setup" href="zhushou360://quiet=1&src=leidian&dtype=wallpaper&op=0&type=jpg&name='+this.group_title+'&url='+this.downurl+'"><s class="icon_mobile"></s>发送到手机</a></li>\
+    //                                 <li class="img_share">\
+    //                                     <a href="javascript:;"><s class="icon_share"></s>分享</a>\
+    //                                     <ul class="share_list" data-title="'+this.group_title+'" data-imgsrc="'+this.qhimg_url+'">\
+    //                                         <li><a title="分享到 新浪微博" class="share_link weibo" href="#" target="_blank">新浪微博</a></li>\
+    //                                         <li><a title="分享到 腾讯微博" class="share_link tweibo" href="#" target="_blank">腾讯微博</a></li>\
+    //                                         <li><a title="分享到 QQ空间" class="share_link qzone" href="#" target="_blank">QQ空间</a></li>\
+    //                                         <li><a title="分享到 人人网" class="share_link renren" href="#" target="_blank">人人网</a></li>\
+    //                                         <li><a title="分享到 豆瓣网" class="share_link douban" href="#" target="_blank">豆瓣网</a></li>\
+    //                                     </ul>\
+    //                                 </li>\
+    //                             </ul>\
+    //                             </li>';
+    //                 currentList.append(item); 
+    //             });
                 
-                //延迟加载
-                imgs = $( '.tab_box:eq('+index+') .img_box img' ),
-                loader = new lazyload( imgs, {
-                    container : '.tab_box:eq('+index+')',
-                    threshold : 10,
-                });
+    //             //延迟加载
+    //             imgs = $( '.tab_box:eq('+index+') .img_box img' ),
+    //             loader = new lazyload( imgs, {
+    //                 container : '.tab_box:eq('+index+')',
+    //                 threshold : 10,
+    //             });
 
-                //初始化滚动条
-                if( likeScrollbar ){
-                    likeScrollbar.destroy();
-                    likeScrollbar = null;
-                }
+    //             //初始化滚动条
+    //             if( likeScrollbar ){
+    //                 likeScrollbar.destroy();
+    //                 likeScrollbar = null;
+    //             }
 
-                likeScrollbar = new $.ui.LikeScrollbar( tabBox, {
-                    left : 4
-                });
-            }
-        });
-    }
+    //             likeScrollbar = new $.ui.LikeScrollbar( tabBox, {
+    //                 left : 4
+    //             });
+    //         }
+    //     });
+    // }
         
     // Tab 组件实例化    
     tab = new $.ui.Tab( mitoTab, {
         init : tabInit
     });
     
-    // 切换 Tab 面板的时候需要重新初始化滚动条, 重新获取图片数据
+    // Tab初始化的时候，加载数据
+    tab.on('init', function(e){
+        index = e.index;
+        tabInit( e.target, e.index); 
+    });
+    // 切换 Tab 面板的时候需要重新初始化滚动条
     tab.on( 'change', function( e ){
-        tabInit( e.target, e.index);
+        //tabInit( e.target);
     });
     
     // hover时显示滚动条
