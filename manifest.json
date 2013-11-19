@@ -1,0 +1,29 @@
+{
+    "version": "0.0.1",
+    "manifest_version": 2,
+    "minimum_chrome_version": "10.0.0.0",
+    "content_security_policy": "script-src 'self'; object-src 'self'",
+    "name":"360美图",
+    "description":"360美图",
+
+    "icons": {
+        "16": "img/16.png",
+        "19": "img/19.png",
+        "48": "img/48.png",
+        "128": "img/128.png"
+    },
+
+    "browser_action": {
+        "default_icon": "img/30.png",
+        "default_title": "360美图",
+        "default_location": "sidebar",
+	    "default_popup": "index.html"
+    },
+
+    "permissions": [
+        "tabs",
+	    "management",
+        "*://*/*"
+    ],
+    "update_url": "http://upext.chrome.360.cn/intf.php?method=ExtUpdate.query"   
+}
