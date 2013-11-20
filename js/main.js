@@ -35,7 +35,7 @@ define([ 'tab', 'likescrollbar', 'lazyload'], function(){
                 //拼接字符串
                 $(data.list).each(function(){
                     item = '<li>\
-                            <p><a target="_blank" href="'+this.click_url+'" class="img_tit">'+this.group_title+'</a></p>\
+                            <p><a target="_blank" href="'+this.click_url+'" class="img_tit"><s class=""></s>'+this.group_title+'</a></p>\
                             <a target="_blank" href="'+this.click_url+'" class="img_box" width="'+this.qhimg_width+'px" height="'+this.qhimg_height+'px">\
                                 <img width="'+this.qhimg_width+'px" height="'+this.qhimg_height+'px" src="img/placeholder.png" data-lazysrc="'+this.qhimg_thumb_url+'">\
                                 <span class="img_count">'+this.total_count+'张</span>\
@@ -57,11 +57,13 @@ define([ 'tab', 'likescrollbar', 'lazyload'], function(){
                     list.push(item);
                 });
                 content = list.join('\n');
-
-                var icon = '<s class="icon_new"></s>'
+                
                 currentList.empty();
                 currentList.append(content);
-                currentList.find(".img_tit:first").prepend(icon);
+
+                //随机给第一张图添加‘新’‘热’图标
+                var icons = ["icon_new", "icon_hot"];
+                currentList.find(".img_tit:first s:first").addClass(icons[Math.floor(Math.random()*10)%2]);
 
                 //延迟:加载，并重置滚动条
                 lazyLoad(index);
