@@ -65,7 +65,7 @@ define([ 'tab', 'likescrollbar', 'lazyload'], function(){
                 var icons = ["icon_new", "icon_hot"];
                 currentList.find(".img_tit:first s:first").addClass(icons[Math.floor(Math.random()*10)%2]);
 
-                //延迟:加载，并重置滚动条
+                //延迟加载，并重置滚动条
                 lazyLoad(index);
                 setScroll(tabBox);
 
